@@ -1,0 +1,31 @@
+name: CI
+
+# Runs on the template repo's own PRs (incl. Dependabot) so dependency bumps are
+# verified before auto-merge. NOTE: apper strips `.github/` at app-seed time, so this
+# workflow only ever runs here — it must stay green on the bare template.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
